@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/annabuzian/Desktop/Project/readWriteJSON/readWriteJSON/fileStorage/payments.json"
+            argument = "/Users/annabuzian/Desktop/Project/readWriteJSON/readWriteJSON/fileStorage/payments.txt"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

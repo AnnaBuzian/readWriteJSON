@@ -29,7 +29,7 @@ const string ARRAY_KEYS[5] = {"rep_date", "agreement", "recipient", "sender", "s
 json readFromFile(string pathFile){
     string inputPath = pathFile;
     json jsonFromFile;
-    
+//    cout << getenv("PWD");
     fstream fin(inputPath);
     if (fin) {
         jsonFromFile << fin;
@@ -82,10 +82,12 @@ TextTable viewJSON(json jsonInput){
     }
     t.endOfRow();
     for (int it = 0; it < jsonInputTable.size(); it++) {
-        for (int i = 0; i < sizeof(ARRAY_KEYS)/sizeof(*ARRAY_KEYS); i++){
-            t.add( jsonInputTable[it][ARRAY_KEYS[i]] );
+        if (!jsonInputTable[it].is_null()){
+            for (int i = 0; i < sizeof(ARRAY_KEYS)/sizeof(*ARRAY_KEYS); i++){
+                t.add( jsonInputTable[it][ARRAY_KEYS[i]] );
+            }
+            t.endOfRow();
         }
-        t.endOfRow();
     }
     
     t.setAlignment( 2, TextTable::Alignment::RIGHT );
@@ -94,34 +96,56 @@ TextTable viewJSON(json jsonInput){
 
 json searchDataFromJSON(json jsonInput){
     json jsonInputTable = jsonInput;
+    json jsonOuputTable;
     json conditionSearch;
-    cout << "Введите условия для поиска.\n";
-    for (int i = 0; i < sizeof(ARRAY_KEYS)/sizeof(*ARRAY_KEYS); i++){
-        cout << "Условие (==, <=, <, >, >=, match) для поля " << ARRAY_KEYS[i] << ": ";
-        cout << cin.get() << endl;
-        if (cin.get() != '\n') {
-            cin >> conditionSearch[ARRAY_KEYS[i]]["condition"];
-            cin.clear();
+    string input = "";
+    cout << "Введите условия для поиска в виде json {\"наименования столбца\":{\"value\":\"искомое значение\"},...} \n";
+    getline(cin, input);
+    conditionSearch = json::parse(input);
+    cout << endl;
+    
+    jsonOuputTable.clear();
+    for (json::iterator it = conditionSearch.begin(); it != conditionSearch.end(); ++it) {
+        for (json::iterator vt = it.value().begin(); vt != it.value().end(); ++vt) {
+            for (int i = 0; i < jsonInputTable.size(); i++ ){
+                if (jsonInputTable[i][it.key()] == vt.value()){
+                    jsonOuputTable[i] = jsonInputTable[i];
+                }
+            }
         }
-        cout << endl;
-        cout << "Значение для поля " << ARRAY_KEYS[i] << ": ";
-        cout << cin.get() << endl;
-        if (cin.get() != '\n') {
-            cin >> conditionSearch[ARRAY_KEYS[i]]["value"];
-            cin.clear();
-        }
-        cout << endl;
     }
-    
-//    jsonInput.find("rep_date").;
-    cout << conditionSearch << endl;
-    
-    return jsonInputTable;
+    return jsonOuputTable;
 };
 
 
 json editDataJSON(json jsonInput){
     json jsonInputTable = jsonInput;
+    json conditionSearch;
+    json changeElem;
+    string keyElem;
+    string valueElem;
+    string input = "";
+    cout << "Введите условия для поиска в виде json {\"наименования столбца\":{\"value\":\"искомое значение\"},...} \n";
+    getline(cin, input);
+    conditionSearch = json::parse(input);
+    cout << endl;
+    cout << "Введите наименования столбца для редактирования \n";
+    getline(cin, keyElem);
+    cout << endl;
+    cout << "Введите значение для редактирования \n";
+    getline(cin, valueElem);
+    cout << endl;
+    
+    for (json::iterator it = conditionSearch.begin(); it != conditionSearch.end(); ++it) {
+        for (json::iterator vt = it.value().begin(); vt != it.value().end(); ++vt) {
+            for (int i = 0; i < jsonInputTable.size(); i++ ){
+                if (jsonInputTable[i][it.key()] == vt.value()){
+                    jsonInputTable[i][keyElem] = valueElem;
+                }
+            }
+        }
+    }
+//    cout << jsonInputTable << endl;
     return jsonInputTable;
 };
 
@@ -159,7 +183,7 @@ int selectOperationJSON(json jsonInput, string pathFile){
             json editJSON = editDataJSON(jsonInputFile);
             cout << viewJSON(editJSON) << endl;
             writeToFile(pathFile, editJSON);
-            selectOperationJSON(jsonInputFile, pathFile);
+            selectOperationJSON(editJSON, pathFile);
             break;}
         default:
             cerr << "Ошибка: Введен номер несуществующей операции!\n";
