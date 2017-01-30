@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A5BFAFE1E3DF21B00024089 /* src in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A26E41E3B6AD80036A065 /* src */; };
+		0A5BFB021E3DF50A00024089 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A5BFB001E3DF50A00024089 /* File.cpp */; };
 		0A6A26D61E3B64E90036A065 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A26D51E3B64E90036A065 /* main.cpp */; };
-		0A6A26E71E3B760C0036A065 /* json in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A6A26E61E3B760C0036A065 /* json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,10 +25,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0A5BFAFF1E3DF4EA00024089 /* File.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
+		0A5BFB001E3DF50A00024089 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
+		0A5BFB031E3DF84900024089 /* fileStorage */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fileStorage; path = readWriteJSON/fileStorage; sourceTree = SOURCE_ROOT; };
 		0A6A26D21E3B64E90036A065 /* readWriteJSON */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = readWriteJSON; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A6A26D51E3B64E90036A065 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; usesTabs = 0; };
-		0A6A26E41E3B6AD80036A065 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; name = src; path = readWriteJSON/src; sourceTree = "<group>"; };
-		0A6A26E61E3B760C0036A065 /* json */ = {isa = PBXFileReference; lastKnownFileType = folder; name = json; path = /usr/local/Cellar/jsoncpp/1.8.0/include/json; sourceTree = "<absolute>"; };
+		0A6A26E41E3B6AD80036A065 /* src */ = {isa = PBXFileReference; lastKnownFileType = folder; path = src; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,7 +38,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A6A26E71E3B760C0036A065 /* json in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,7 +64,11 @@
 		0A6A26D41E3B64E90036A065 /* readWriteJSON */ = {
 			isa = PBXGroup;
 			children = (
+				0A5BFB031E3DF84900024089 /* fileStorage */,
+				0A6A26E41E3B6AD80036A065 /* src */,
 				0A6A26D51E3B64E90036A065 /* main.cpp */,
+				0A5BFAFF1E3DF4EA00024089 /* File.h */,
+				0A5BFB001E3DF50A00024089 /* File.cpp */,
 			);
 			path = readWriteJSON;
 			sourceTree = "<group>";
@@ -70,8 +76,6 @@
 		0A6A26DC1E3B65F50036A065 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0A6A26E61E3B760C0036A065 /* json */,
-				0A6A26E41E3B6AD80036A065 /* src */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -133,6 +137,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0A5BFB021E3DF50A00024089 /* File.cpp in Sources */,
+				0A5BFAFE1E3DF21B00024089 /* src in Sources */,
 				0A6A26D61E3B64E90036A065 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,6 +266,7 @@
 				0A6A26DB1E3B64E90036A065 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
