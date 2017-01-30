@@ -13,6 +13,7 @@
 #include <string>
 #include <sstream>
 #include <time.h>
+#include <typeinfo>
 
 // JSON parser
 #include "src/json.hpp"
@@ -29,11 +30,15 @@ const string ARRAY_KEYS[5] = {"rep_date", "agreement", "recipient", "sender", "s
 json readFromFile(string pathFile){
     string inputPath = pathFile;
     json jsonFromFile;
-//    cout << getenv("PWD");
     fstream fin(inputPath);
     if (fin) {
-        jsonFromFile << fin;
-        if ( ! jsonFromFile[0].empty() ){
+        try{
+            jsonFromFile << fin;
+        }catch(exception &e){
+            cerr << "Ошибка чтения JSONа из файла." << endl;
+            exit(1);
+        }
+        if ( ! jsonFromFile[0].empty()){
             for (int it = 0; it < jsonFromFile.size(); it++) {
                 for (int i = 0; i < sizeof(ARRAY_KEYS)/sizeof(*ARRAY_KEYS); i++){
                     if (jsonFromFile[it][ARRAY_KEYS[i]].empty()){
@@ -44,12 +49,12 @@ json readFromFile(string pathFile){
             }
             
         }else{
-            cerr << "Ошибка. Файл пустой, либо неправильная структура JSON.\n";
+            cerr << "Ошибка: JSON пустой.\n";
             exit(1);
         }
     }
     else {
-        cerr << "Ошибка открытия входящего файла \"" << inputPath << "\"" << endl;
+        cerr << "Ошибка: Файл не найден \"" << inputPath << "\"" << endl;
         exit(1);
     }
     return jsonFromFile;
@@ -62,13 +67,13 @@ int writeToFile(string pathFile, json jsonInput){
     if (ostr) {
         ostr << jsonInput;
         if (ostr.bad()) {
-            cerr << "Unrecoverable write error" << endl;
+            cerr << "Ошибка записи" << endl;
             return 1;
         }
         ostr.close();
     }
     else {
-        cerr << "Output file open error \"" << inputPath << "\"" << endl;
+        cerr << "Ошибка открытия выходного файла \"" << inputPath << "\"" << endl;
         return 1;
     }
     return 0;
@@ -97,21 +102,19 @@ TextTable viewJSON(json jsonInput){
 json searchDataFromJSON(json jsonInput){
     json jsonInputTable = jsonInput;
     json jsonOuputTable;
-    json conditionSearch;
-    string input = "";
-    cout << "Введите условия для поиска в виде json {\"наименования столбца\":{\"value\":\"искомое значение\"},...} \n";
-    getline(cin, input);
-    conditionSearch = json::parse(input);
+    string keyElem;
+    string valueElem;
+    cout << "Введите наименования столбца для поиска \n";
+    getline(cin, keyElem);
+    cout << endl;
+    cout << "Введите искомое значение \n";
+    getline(cin, valueElem);
     cout << endl;
     
     jsonOuputTable.clear();
-    for (json::iterator it = conditionSearch.begin(); it != conditionSearch.end(); ++it) {
-        for (json::iterator vt = it.value().begin(); vt != it.value().end(); ++vt) {
-            for (int i = 0; i < jsonInputTable.size(); i++ ){
-                if (jsonInputTable[i][it.key()] == vt.value()){
-                    jsonOuputTable[i] = jsonInputTable[i];
-                }
-            }
+    for (int i = 0; i < jsonInputTable.size(); i++ ){
+        if (jsonInputTable[i][keyElem] == valueElem){
+            jsonOuputTable[i] = jsonInputTable[i];
         }
     }
     return jsonOuputTable;
@@ -122,30 +125,27 @@ json editDataJSON(json jsonInput){
     json jsonInputTable = jsonInput;
     json conditionSearch;
     json changeElem;
+    string keyElemEdit;
+    string valueElemEdit;
     string keyElem;
     string valueElem;
-    string input = "";
-    cout << "Введите условия для поиска в виде json {\"наименования столбца\":{\"value\":\"искомое значение\"},...} \n";
-    getline(cin, input);
-    conditionSearch = json::parse(input);
-    cout << endl;
-    cout << "Введите наименования столбца для редактирования \n";
+    cout << "Введите наименования столбца для поиска \n";
     getline(cin, keyElem);
     cout << endl;
-    cout << "Введите значение для редактирования \n";
+    cout << "Введите искомое значение \n";
     getline(cin, valueElem);
     cout << endl;
-    
-    for (json::iterator it = conditionSearch.begin(); it != conditionSearch.end(); ++it) {
-        for (json::iterator vt = it.value().begin(); vt != it.value().end(); ++vt) {
-            for (int i = 0; i < jsonInputTable.size(); i++ ){
-                if (jsonInputTable[i][it.key()] == vt.value()){
-                    jsonInputTable[i][keyElem] = valueElem;
-                }
-            }
+    cout << "Введите наименования столбца для редактирования \n";
+    getline(cin, keyElemEdit);
+    cout << endl;
+    cout << "Введите значение для редактирования \n";
+    getline(cin, valueElemEdit);
+    cout << endl;
+    for (int i = 0; i < jsonInputTable.size(); i++ ){
+        if (jsonInputTable[i][keyElem] == valueElem){
+            jsonInputTable[i][keyElemEdit] = valueElemEdit;
         }
     }
-//    cout << jsonInputTable << endl;
     return jsonInputTable;
 };
 
@@ -156,15 +156,16 @@ int selectOperationJSON(json jsonInput, string pathFile){
     json jsonInputFile = jsonInput;
     
     cout << "Введите, пожалуйста, номер операции, которую нужно выполнить с json (VIEW - 1, search - 2, edit - 3, exit - 0): ";
-    cin >> in_string;
-    if (cin.get() == '\n'){
+    getline(cin, in_string);
+    if (in_string.empty()) {
         inputOperation = atoi(OPERATION_JSON);
     }else if (cin.fail()){
         cin.clear();
         cerr << "Ошибка ввода!\n";
         exit(1);
+    }else{
+        inputOperation = atoi(in_string.c_str());
     }
-    inputOperation = atoi(in_string.c_str());
     
     switch ( inputOperation )
     {
